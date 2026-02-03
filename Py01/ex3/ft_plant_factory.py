@@ -6,14 +6,17 @@ class Plant:
         self.age = age
         Plant.count += 1
 
-rose = Plant("Rose","25cm","30 days")
-oak = Plant("Oak","200cm","265 days")
-cactus = Plant("Cactus","5cm","90 days")
-sunflower = Plant("Sunflower", "80cm","45 days")
-fern = Plant("Fern", "15cm","120 days")
+rose = Plant("Rose",25,"30 days")
+oak = Plant("Oak",200,"265 days")
+cactus = Plant("Cactus",5,"90 days")
+sunflower = Plant("Sunflower", 80,"45 days")
+fern = Plant("Fern", 15,"120 days")
 
 plants = [rose,oak,cactus,sunflower,fern]
 
 for plant in plants:
 	print(f"Created: {plant.name} ({plant.height}, {plant.age})")
 print(f"Total plants created: {Plant.count}")
+
+rose.height = 32 
+print(f"la hauteur de la rose est de {rose.height}")
