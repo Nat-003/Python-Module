@@ -22,7 +22,7 @@ class Plant:
         if age >= 0:
             self._age = age
         else:
-            print("Security: Negative height rejected")
+            print("Security: Negative age rejected")
 
 class Flower(Plant):
     def	__init__(self, name, height, age, color):
