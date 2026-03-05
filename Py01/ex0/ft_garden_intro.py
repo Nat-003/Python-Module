@@ -1,4 +1,4 @@
-if __name__ =="__main__":
+if __name__ == "__main__":
     name = "Rose"
     height = "25cm"
     age = "30 days"

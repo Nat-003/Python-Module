@@ -31,7 +31,7 @@ class Plant:
 
     def get_type(self):
         return "regular"
-    
+
     def __str__(self):
         return f"{self.name}: {self.get_height()}cm "
 

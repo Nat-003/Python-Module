@@ -38,6 +38,12 @@ class GardenManager:
             print(f"Error: {e}")
         finally:
             print("Closing watering system (cleanup)")
+    
+    def check_water_level(self, plant):
+            if plant.water < 5:
+                raise WaterError("Not enough water in the tank")
+            else:
+                print("The water level is good")  
 
     def check_plant_health(self):
         for plant in self.plants:
@@ -54,6 +60,7 @@ rose = Plant("rose", 5, 7)
 sunflower = Plant("Sunflower", 2, 8)
 orchide = Plant("", 6, 7)
 sabot = Plant("Sabot de Venus", 5, 15)
+carrot = Plant("Carrot", 0, 2)
 plants_list = [rose, sunflower, sabot, orchide]
 
 
@@ -77,6 +84,12 @@ def test_garden_management():
         warden.check_plant_health()
     except (WaterError, ValueError) as e:
         print(f"{e}")
+    print("\n")
+    print("Testing error recovery...")
+    try:
+        warden.check_water_level(carrot)
+    except WaterError as e:
+        print(f"Error: {e}")
 
 
 test_garden_management()
