@@ -27,14 +27,9 @@ class Plant:
             print("Security: Negative height rejected")
 
 
-rose = Plant("Rose", 40, 39)
+rose = Plant("Rose", -40, 39)
 
 
-rose.__height = 442
 print(rose.get_height())
-print(rose.__height)
-rose.__age = -12
-
-print(rose.__age)
 print(rose.get_age())
 
