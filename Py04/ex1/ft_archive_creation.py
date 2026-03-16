@@ -12,7 +12,7 @@ def write_in_file() -> None:
     ]
     for entry in entries:
         print(entry)
-        f.write(entry + "\n")   
+        f.write(entry + "\n")
     f.close()
     print("\nData inscription complete. Storage unit sealed.")
     print(f"Archive '{file_name}' ready for long-term preservation.")
