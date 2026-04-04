@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Protocol
 
 class DataProcessor(ABC):
     def __init__(self):
@@ -97,51 +97,110 @@ class LogProcessor(DataProcessor):
             self.counter += 1
 
 
+
+class ExportPlugin(Protocol):
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        ...
+
+class CSVExport:
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        values = []
+        for d in data:
+            _, y = d
+            values.append(y)
+        print("CSV Output:")
+        print(",".join(values))
+
+class JSONExport:
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        parts = []
+        for d in data:
+            x, y = d
+            parts.append(f'"item_{x}": "{y}"')
+        print("JSON Output:")
+        print("{" + ", ".join(parts) + "}")
+
+class DataStream:
+    def __init__(self):
+        self.processor = []
+
+    def register_processor(self, proc: DataProcessor) -> None:
+        self.processor.append(proc)
+
+    def process_stream(self, stream: list[Any]) -> None:
+        for e in stream:
+            for proc in self.processor:
+                if proc.validate(e):
+                    proc.ingest(e)
+                    break
+            else:
+                print(f"DataStream error - Can't process element in stream: {e}")
+
+    def print_processors_stats(self) -> None:
+        print("== DataStream statistics ==")
+        if not self.processor:
+            print("No processor found, no data")
+        else:
+            for proc in self.processor:
+                name = type(proc).__name__
+                total = proc.counter
+                remaining = len(proc.stored_data)
+                print(f"{name}: total {total} items processed, remaining {remaining} on processor")
+    
+    def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
+        for proc in self.processor:
+            collect = []
+            try:
+                for _ in range(nb):
+                    res =  proc.output()
+                    collect.append(res)
+            except ValueError:
+                pass
+            plugin.process_output(collect)
+
+
 if __name__ == "__main__":
-    print("=== Code Nexus - Data Processor ===\n")
+    print("=== Code Nexus - Data Pipeline ===\n")
 
-    # Numeric Processor
-    print("Testing Numeric Processor...")
-    np = NumericProcessor()
-    print(f"  Trying to validate input '42': {np.validate(42)}")
-    print(f"  Trying to validate input 'Hello': {np.validate('Hello')}")
+    print("Initialize Data Stream...")
+    ds = DataStream()
+    ds.print_processors_stats()
 
-    print("  Test invalid ingestion of string 'foo' without prior validation:")
-    try:
-        np.ingest("foo")  # type: ignore
-    except Exception as e:
-        print(f"  Got exception: {e}")
+    print("\nRegistering Processors")
+    ds.register_processor(NumericProcessor())
+    ds.register_processor(TextProcessor())
+    ds.register_processor(LogProcessor())
 
-    np.ingest([1, 2, 3, 4, 5])
-    print(f"  Processing data: [1, 2, 3, 4, 5]")
-    print(f"  Extracting 3 values...")
-    for i in range(3):
-        rank, value = np.output()
-        print(f"  Numeric value {rank}: {value}")
-
-    # Text Processor
-    print("\nTesting Text Processor...")
-    tp = TextProcessor()
-    print(f"  Trying to validate input '42': {tp.validate(42)}")
-
-    tp.ingest(["Hello", "Nexus", "World"])
-    print(f"  Processing data: ['Hello', 'Nexus', 'World']")
-    print(f"  Extracting 1 value...")
-    rank, value = tp.output()
-    print(f"  Text value {rank}: {value}")
-
-    # Log Processor
-    print("\nTesting Log Processor...")
-    lp = LogProcessor()
-    print(f"  Trying to validate input 'Hello': {lp.validate('Hello')}")
-
-    logs = [
-        {"log_level": "NOTICE", "log_message": "Connection to server"},
-        {"log_level": "ERROR", "log_message": "Unauthorized access!!"}
+    batch1 = [
+        "Hello world",
+        [3.14, -1, 2.71],
+        [{"log_level": "WARNING", "log_message": "Telnet access! Use ssh instead"},
+         {"log_level": "INFO", "log_message": "User wil is connected"}],
+        42,
+        ["Hi", "five"]
     ]
-    lp.ingest(logs)
-    print(f"  Processing data: {logs}")
-    print(f"  Extracting 2 values...")
-    for i in range(2):
-        rank, value = lp.output()
-        print(f"  Log entry {rank}: {value}")
+
+    print(f"\nSend first batch of data on stream: {batch1}")
+    ds.process_stream(batch1)
+    ds.print_processors_stats()
+
+    print("\nSend 3 processed data from each processor to a CSV plugin:")
+    ds.output_pipeline(3, CSVExport())
+    ds.print_processors_stats()
+
+    batch2 = [
+        21,
+        ["I love AI", "LLMs are wonderful", "Stay healthy"],
+        [{"log_level": "ERROR", "log_message": "500 server crash"},
+         {"log_level": "NOTICE", "log_message": "Certificate expires in 10 days"}],
+        [32, 42, 64, 84, 128, 168],
+        "World hello"
+    ]
+
+    print(f"\nSend another batch of data: {batch2}")
+    ds.process_stream(batch2)
+    ds.print_processors_stats()
+
+    print("\nSend 5 processed data from each processor to a JSON plugin:")
+    ds.output_pipeline(5, JSONExport())
+    ds.print_processors_stats()
