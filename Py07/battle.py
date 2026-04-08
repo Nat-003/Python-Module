@@ -10,6 +10,7 @@ def test_factory(factory: CreatureFactory) -> None:
         print(c.describe())
         print(c.attack())
 
+
 def battle(fact1: CreatureFactory, fact2: CreatureFactory) -> None:
     print("Testing battle")
     base1 = fact1.create_base()
@@ -18,6 +19,7 @@ def battle(fact1: CreatureFactory, fact2: CreatureFactory) -> None:
     print("fight")
     print(f"{base1.attack()}")
     print(f"{base2.attack()}")
+
 
 if __name__ == "__main__":
     ff = FlameFactory()
