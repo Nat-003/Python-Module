@@ -2,11 +2,26 @@ import os
 import sys
 from dotenv import load_dotenv
 
-
 def oracle() -> None:
     env_found = load_dotenv()
     if not env_found:
-        raise Exception("[INFO] No .env file found. Reading from system environment.")
+        print("[INFO] No .env file found. Reading from system environment.")
+
+    required_vars = [
+        "MATRIX_MODE",
+        "DATABASE_URL",
+        "API_KEY",
+        "LOG_LEVEL",
+        "ZION_ENDPOINT"
+    ]
+    
+    missing = [var for var in required_vars if os.getenv(var) is None]
+
+    if missing:
+        print("ORACLE STATUS: Reading the Matrix... FAILED")
+        for var in missing:
+            print(f"CRITICAL ERROR: Configuration variable '{var}' is missing.")
+        sys.exit(1)
 
     mode = os.getenv("MATRIX_MODE")
     db_url = os.getenv("DATABASE_URL")
@@ -20,14 +35,13 @@ def oracle() -> None:
 
     if mode == "development":
         print(f"Database: {db_url}")
-        masked_key = f"{api_key[:4]}****" if api_key else "None"
-        print(f"API Access: Authenticated (Key: {masked_key})")
+        print(f"API Access: Authenticated (Key: {api_key})")
         print(f"Log Level: {log_level}")
         print(f"Zion Network: {zion_url}")
     else:
-        print("Database: Connected to local instance")
+        print("Database: Conneted remotly")
         print("API Access: Authenticated (Dev Mock)")
-        print(f"Log Level: {log_level}")
+        print(f"Log Level: User")
         print("Zion Network: Online")
 
     print("\nEnvironment security check:")
