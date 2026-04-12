@@ -43,7 +43,22 @@ def run_analysis() -> None:
     print("Analysis complete!")
     print("Results saved to: matrix_analysis.png")
 
+def compare_managers() -> None:
+    print("\nDependency Management Comparison:")
+    print("\npip:")
+    print("  Uses requirements.txt to install dependencies")
+    print("  Version pinning is manual (e.g. pandas==2.1.0)")
+    print("  You manage the virtual environment separately")
+    print("  Install with: pip install -r requirements.txt")
+    print("\nPoetry:")
+    print("  Uses pyproject.toml to install dependencies")
+    print("  Version ranges are flexible (e.g. pandas^2.1.0)")
+    print("  Automatically creates and manages the virtual environment")
+    print("  Tries to install your project as a package by default")
+    print("  Install with: poetry install")
+
 
 if __name__ == "__main__":
     check_packages()
     run_analysis()
+    compare_managers()
