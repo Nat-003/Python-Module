@@ -4,13 +4,15 @@ from dotenv import load_dotenv
 
 
 def oracle() -> None:
-    load_dotenv()
+    env_found = load_dotenv()
+    if not env_found:
+        raise Exception("[INFO] No .env file found. Reading from system environment.")
 
     mode = os.getenv("MATRIX_MODE")
-    db_url = os.getenv("DATABASE_URL", "None")
-    api_key = os.getenv("API_KEY", "None")
-    log_level = os.getenv("LOG_LEVEL", "INFO")
-    zion_url = os.getenv("ZION_ENDPOINT", "None")
+    db_url = os.getenv("DATABASE_URL")
+    api_key = str(os.getenv("API_KEY"))
+    log_level = os.getenv("LOG_LEVEL")
+    zion_url = os.getenv("ZION_ENDPOINT")
 
     print("ORACLE STATUS: Reading the Matrix...")
     print("\nConfiguration loaded:")
@@ -18,7 +20,7 @@ def oracle() -> None:
 
     if mode == "development":
         print(f"Database: {db_url}")
-        masked_key = f"{api_key[:0]}****" if api_key != "None" else "None"
+        masked_key = f"{api_key[:4]}****" if api_key else "None"
         print(f"API Access: Authenticated (Key: {masked_key})")
         print(f"Log Level: {log_level}")
         print(f"Zion Network: {zion_url}")
@@ -30,19 +32,18 @@ def oracle() -> None:
 
     print("\nEnvironment security check:")
     
-
-    if api_key != "None":
+    if api_key not in ["None", "your_secret_key_here", ""]:
         print("[OK] No hardcoded secrets detected")
     else:
-        print("[WARNING] Using default or missing secrets")
-
+        print("[WARNING] Using placeholder or empty secrets")
 
     if os.path.exists(".gitignore"):
         with open(".gitignore", "r") as f:
-            if ".env" in f.read():
+            content = f.read()
+            if ".env" in content:
                 print("[OK] .env file properly configured")
             else:
-                print("[!] .env not found in .gitignore")
+                print("[!] SECURITY RISK: .env not in .gitignore")
     else:
         print("[!] .gitignore missing")
 
@@ -53,10 +54,9 @@ def oracle() -> None:
 
     print("\nThe Oracle sees all configurations.")
 
-
 if __name__ == "__main__":
     try:
         oracle()
     except Exception as e:
-        print(f"Error accessing the mainframe: {e}")
+        print(f"Error: {e}")
         sys.exit(1)
