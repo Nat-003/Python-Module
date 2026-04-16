@@ -27,6 +27,7 @@ def spell_transformer(spells: list[str]) -> list[str]:
     result = list(map(lambda s: "*"+s+"*",spells))
     return result
 
+
 def mages_stats(mages: list[dict]) -> dict:
     stats = {}
     max_pwr = max(mages,key=lambda m: m['power'])
