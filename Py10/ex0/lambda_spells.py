@@ -13,8 +13,9 @@ heroes = [
 spells = ["Fireball", "Frostbolt", "Thunder", "Shadow Strike", "Holy Light"]
 students = {"Alice": 88, "Bob": 72, "Clara": 95}
 
+
 def artifact_sorter(artifact: list[dict]) -> list[dict]:
-    result = sorted(artifact, key=lambda a:a["power"],reverse=True)
+    result = sorted(artifact, key=lambda a: a["power"], reverse=True)
     return result
 
 
@@ -24,14 +25,14 @@ def power_filter(mages: list[dict], min_power: int) -> list[dict]:
 
 
 def spell_transformer(spells: list[str]) -> list[str]:
-    result = list(map(lambda s: "*"+s+"*",spells))
+    result = list(map(lambda s: "*"+s+"*", spells))
     return result
 
 
 def mages_stats(mages: list[dict]) -> dict:
     stats = {}
-    max_pwr = max(mages,key=lambda m: m['power'])
-    min_pwr = min(mages,key=lambda m: m['power'])
+    max_pwr = max(mages, key=lambda m: m['power'])
+    min_pwr = min(mages, key=lambda m: m['power'])
     total_pwr = list(map(lambda m: m["power"], mages))
     total = sum(total_pwr)
     average_pwr = total / len(mages)

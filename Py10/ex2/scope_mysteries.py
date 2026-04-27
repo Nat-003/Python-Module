@@ -32,9 +32,10 @@ def memory_vault() -> dict:
        storage[key] = value
 
     def recall(key):
-        return storage.get(key,"Memory not found") 
+        return storage.get(key, "Memory not found") 
 
     return {"store": store, "recall": recall}
+
 
 test = mage_counter()
 for i in range(10):
