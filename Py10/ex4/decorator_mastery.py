@@ -33,5 +33,22 @@ def power_validator(min_validator: int) -> Callable:
         return wrapper
     return decorator
 
+
+def retry_spell(max_attempts: int) -> Callable:
+    def decorator(func: Callable):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            attempt = 0
+            while attempt < max_attempts:
+                try:
+                    result = func(*args, **kwargs)
+                    return result
+                except Exception:
+                    print(f"Spell failed, retrying (attempt {attempt + 1}/{max_attempts})")
+                    attempt += 1
+            return f"Spell casting failed after {max_attempts} attempts"
+        return wrapper
+    return decorator
+
 if __name__ == "__main__":
     hello()
