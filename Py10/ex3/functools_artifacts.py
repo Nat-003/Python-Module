@@ -27,9 +27,9 @@ def partial_enchanter(base_enchantment: Callable) -> dict[str, Callable]:
     v1 = partial(base_enchantment, power=50, element="water")
     v2 = partial(base_enchantment, power=50, element="fire")
     v3 = partial(base_enchantment, power=50, element="wind")
-    new_versions = {"v1": v1,
-                    "v2": v2,
-                    "v3": v3}
+    new_versions = {"water": v1,
+                    "fire": v2,
+                    "wind": v3}
     return new_versions
 
 
@@ -58,13 +58,26 @@ def spell_dispatcher() -> Callable[[Any], str]:
         return f" Multi-cast: {len(args)}"
 
     return dispatch
+
+
 if __name__ == "__main__":
-    try:
-        add = spell_reducer(test_spells, "min")
-        print(add)
-    except ValueError as e:
-        print(e)
-    test = partial_enchanter(shield)["v1"]
-    print(test("Dragon"))
-    print(memoized_fibonacci(10))
-    print(memoized_fibonacci.cache_info())
+    print("Testing spell reducer...")
+    print(f"Sum: {spell_reducer([10, 20, 30, 40], 'add')}")
+    print(f"Product: {spell_reducer([10, 20, 30, 40], 'multiply')}")
+    print(f"Max: {spell_reducer([10, 20, 30, 40], 'max')}")
+
+    print("\nTesting partial enchanter...")
+    enchanters = partial_enchanter(shield)
+    print(enchanters["fire"]("Dragon"))
+
+    print("\nTesting memoized fibonacci...")
+    for n in [0, 1, 10, 15]:
+        print(f"Fib({n}): {memoized_fibonacci(n)}")
+    print(f"Cache info: {memoized_fibonacci.cache_info()}")
+
+    print("\nTesting spell dispatcher...")
+    dispatch = spell_dispatcher()
+    print(dispatch(42))
+    print(dispatch("fireball"))
+    print(dispatch(["fire", "ice", "wind"]))
+    print(dispatch(3.14))

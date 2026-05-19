@@ -26,7 +26,7 @@ def power_amplifier(base_spell: Callable, multiplier: int) -> Callable:
 
 
 def conditional_caster(condition: Callable, spell: Callable) -> Callable:
-    return lambda target, power: spell(target, power) if condition(target, power) else "Spell fizzeled"
+    return lambda target, power: spell(target, power) if condition(target, power) else "Spell fizzled"
 
 
 
@@ -34,8 +34,6 @@ def spell_sequence(spells: list[Callable]) -> Callable:
     return lambda target, power: list(map(lambda s: s(target, power), spells))
 
 
-mega_fireball = power_amplifier(fireball, 3)
-print(mega_fireball("Dragon", 20))
 
 if __name__ == "__main__":
     print("Testing spell combiner...")

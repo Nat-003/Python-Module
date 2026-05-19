@@ -61,5 +61,31 @@ class MageGuild:
     def cast_spell(self, spell_name: str, power: int) -> str:
         return f"Successfully cast {spell_name} with {power} power"
     
+
 if __name__ == "__main__":
-    
+    print("Testing spell timer...")
+
+    @spell_timer
+    def fireball(target: str, power: int) -> str:
+        import time
+        time.sleep(0.1)
+        return "Fireball cast!"
+
+    result = fireball("Dragon", 50)
+    print(f"Result: {result}")
+
+    print("\nTesting retrying spell...")
+
+    @retry_spell(3)
+    def unstable_spell() -> str:
+        raise Exception("Spell unstable!")
+
+    print(unstable_spell())
+    print("\nWaaaaaaagh spelled !")
+
+    print("\nTesting MageGuild...")
+    print(MageGuild.validate_mage_name("Merlin"))
+    print(MageGuild.validate_mage_name("Al"))
+    guild = MageGuild()
+    print(guild.cast_spell("Lightning", 15))
+    print(guild.cast_spell("Spark", 5))
