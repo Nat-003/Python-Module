@@ -16,16 +16,12 @@ def spell_timer(func: Callable) -> Callable:
     return wrapper
 
 
-@spell_timer
-def hello():
-    print("Hello")
-
-
 def power_validator(min_validator: int) -> Callable:
     def decorator(func: Callable):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            if args[0] >= min_validator:
+            power = args[0] if isinstance(args[0], int) else args[2]
+            if power >= min_validator:
                 result = func(*args, **kwargs)
                 return result
             else:
@@ -44,11 +40,26 @@ def retry_spell(max_attempts: int) -> Callable:
                     result = func(*args, **kwargs)
                     return result
                 except Exception:
-                    print(f"Spell failed, retrying (attempt {attempt + 1}/{max_attempts})")
+                    print(
+                        f"Spell failed, retrying "
+                        f"(attempt {attempt + 1}/{max_attempts})"
+                        )
                     attempt += 1
             return f"Spell casting failed after {max_attempts} attempts"
         return wrapper
     return decorator
 
+
+class MageGuild:
+    @staticmethod
+    def validate_mage_name(name: str) -> bool:
+        if len(name) >= 3 and name.replace(" ", "").isalpha():
+            return True
+        return False
+
+    @power_validator(10)
+    def cast_spell(self, spell_name: str, power: int) -> str:
+        return f"Successfully cast {spell_name} with {power} power"
+    
 if __name__ == "__main__":
-    hello()
+    

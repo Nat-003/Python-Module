@@ -49,3 +49,4 @@ def mages_stats(mages: list[dict]) -> dict:
 # print(power)
 # print(spell_transformer(spells))
 print(mages_stats(heroes))
+if __name__ == "__main__":
